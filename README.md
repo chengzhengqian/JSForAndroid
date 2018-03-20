@@ -42,16 +42,23 @@ Similary, we can easilty use Android API to create a GUI app
 
 ``` javascript
 
-load("android.widget.Button","Btn")
-proxy("android.view.View$OnClickListener","Clk")
+load("android.widget.Button","Btn");
+proxy("android.view.View$OnClickListener","Clk");
+load("android.widget.LinearLayout$LayoutParams","LLP");
+load("android.widget.LinearLayout","LL");
 
-app=new App()
-root=new Root()
-root.removeAllViews()
-b=new Btn(app)
-b.setText("sdfasd")
-b.setOnClickListener(new Clk({onClick:"(v)=>{v.setText('123');}"}))
-root.addView(b)
 
+root.removeAllViews();
+lp=new LLP(0,-2,1.0);
+l=new LL(app)
+for(i=0;i<5;i++){
+    b=new Btn(app);
+        b.setText("btn");
+	    b.setLayoutParams(lp)
+	        b.setOnClickListener(new Clk({onClick:"(v)=>{v.setText('clicked');}"}));
+		    l.addView(b);
+		    
+}
+root.addView(l)
 ```
 
