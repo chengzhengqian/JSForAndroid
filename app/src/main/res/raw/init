@@ -1,0 +1,94 @@
+JAVA_INTERPRETER_TYPE="duktape";
+
+GLOBAL_OBJECT_INDEX=0
+
+
+function init(){
+  GLOBAL_OBJECT_INDEX=0
+  __handles__={}
+  app.clear()
+}
+
+function requestNewIndex(){
+   GLOBAL_OBJECT_INDEX=GLOBAL_OBJECT_INDEX+1;
+   return GLOBAL_OBJECT_INDEX;;
+}
+
+
+
+function print(v){
+  app.println(v.toString());
+}
+__javascript_objects__={};
+
+function Handle(func){
+   this.name="func"+requestNewIndex();
+   __javascript_objects__[this.name]=func;
+}
+
+
+
+
+function Root(){
+  this.name="root";
+  this.add=function(view){app.addView(this.name,view.name);}
+}
+
+root=new Root();
+
+function Button(text){
+  this.name="btn"+requestNewIndex();
+  __javascript_objects__[this.name]=this;
+  app.Button(this.name,text);
+  this.setText=function(text){app.setText(this.name,text);}
+  this.getText=function(){return app.getText(this.name);}
+  this.release=function(){app.delete(this.name);
+     delete __javascript_objects__[this.name];
+     delete __javascript_objects__[this.onClick_name];}
+  this.setLinearLayoutPara=function(p){app.setLinearLayoutPara(this.name,p.name)};
+  this.onClick=function(func){
+      var h=new Handle(func);
+      this.onClick_name=h.name;
+      app.onClick(this.name,this.onClick_name);
+      }
+
+}
+
+function LinearLayout(orientation){
+   this.name="ll"+requestNewIndex();
+   __javascript_objects__[this.name]=this;
+   app.LinearLayout(this.name,orientation);
+   this.setLinearLayoutPara=function(p){app.setLinearLayoutPara(this.name,p.name)};
+   this.release=function(){app.delete(this.name);
+        delete __javascript_objects__[this.name];
+        }
+   this.add=function(view){app.addView(this.name,view.name);}
+
+}
+
+function mapLinearLayoutPara(width){
+   if(width==="m"){
+      return -1;
+   }
+   else if(width==="w"){
+      return -2;
+   }
+
+   return width;
+
+}
+
+function LinearLayoutPara(width,height,weight){
+   this.name="llp"+requestNewIndex();
+   __javascript_objects__[this.name]=this;
+
+   app.LinearLayoutPara(this.name,mapLinearLayoutPara(width)
+   +":"+mapLinearLayoutPara(height)+":"+weight);
+
+   this.release=function(){app.delete(this.name);
+       delete __javascript_objects__[this.name];
+       };
+}
+
+
+

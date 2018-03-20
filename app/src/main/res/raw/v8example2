@@ -1,0 +1,18 @@
+app=Root()
+app.init()
+lp0=LayoutParams("w","0","1");
+lp1=LayoutParams("0","w","1");
+function onclick(v){
+   v.setText("click!");
+}
+for(i=0;i<10;i++){
+l=LinearLayout("h");
+setLayoutParams(l,lp0);
+  for(j=0;j<4;j++){
+  b=Button(i+","+j);
+  b.onClick("onclick");
+  add(l,b);
+  setLayoutParams(b,lp1);
+  }
+add(app,l);
+}

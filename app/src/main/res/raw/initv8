@@ -1,0 +1,34 @@
+function Button(name){
+  t={};
+  button.call(t);
+  t.setText(name);
+  return t;
+}
+function Root(){
+  t={};
+  root.call(t);
+  return t;
+}
+function LinearLayout(orientation){
+  t={};
+  linearLayout.call(t);
+  t.setOrientation(orientation);
+  return t;
+}
+function LayoutParams(w,h,weight){
+  t={};
+  layoutParams.call(t);
+  t.setLayoutParams(w,h,weight);
+  return t;
+}
+
+function add(a,b){
+  b.pushJavaObject();
+  a.addView();
+}
+function setLayoutParams(l,p){
+  p.pushJavaObject();
+  l.setLayoutParams();
+}
+
+

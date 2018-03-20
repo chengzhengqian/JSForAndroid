@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">Scriptor</string>
+    <string name="run">🐎</string>
+    <string name="server">🌐</string>
+    <string name="ticker_text">Droid</string>
+    <string name="notification_message">ip</string>
+    <string name="notification_title">running</string>
+    <string name="dir">\uD83D\uDCC2</string>
+    <string name="file">file</string>
+    <string name="save">💾</string>
+    <string name="newfile">💎</string>
+    <string name="newfilename">enter name for file or directory)</string>
+    <string name="delete">🗑</string>
+    <string name="directory">🔑</string>
+    <string name="log"> 🐵</string>
+    <string name="clear_log">🗑</string>
+    <string name="hello">hello</string>
+    <string name="ui"> 😸</string>
+    <string name="example">🎨</string>
+    <string name="new_directory">📁</string>
+    <string name="back">⇚</string>
+</resources>

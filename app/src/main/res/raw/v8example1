@@ -1,0 +1,8 @@
+app=Root()
+app.init()
+function onclick(v){
+  v.setText("good");
+}
+b=Button("button");
+b.onClick("onclick")
+add(app,b)

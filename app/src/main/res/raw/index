@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<script>
+$(document).ready(function(){
+
+  $("#file").click(function(){
+            $.post("currentFile",
+            {
+              path: ""
+            },
+            function(data,status){
+
+                $("#editor").text(data);
+            });
+        });
+     $("#save").click(function(){
+            $.post("saveCurrentFile",
+            {
+              content: $("#editor").val()
+            },
+            function(data,status){
+                if(data!="success")
+                   alert(data );
+            });
+        });
+
+     $("#ui").click(function(){
+                $.post("changeView",
+                {
+                  view: "ui"
+                },
+                function(data,status){
+                    if(data!="success")
+                       alert(data );
+                });
+            });
+      $("#dir").click(function(){
+                    $.post("changeView",
+                    {
+                      view: "directory"
+                    },
+                    function(data,status){
+                        if(data!="success")
+                           alert(data );
+                    });
+                });
+      $("#log").click(function(){
+                    $.post("changeView",
+                    {
+                      view: "log"
+                    },
+                    function(data,status){
+                        if(data!="success")
+                           alert(data );
+                    });
+                });
+        $("#v8").click(function(){
+                                $.post("javav8interface",
+                                {
+                                  code: $("#editor").val()
+                                },
+                                function(data,status){
+                                    if(data!="success")
+                                       alert(data );
+                                });
+                            });
+        $("#run").click(function(){
+                            $.post("runCode",
+                            {
+                              code: $("#editor").val()
+                            },
+                            function(data,status){
+                                if(data!="success")
+                                   alert(data );
+                            });
+                        });
+
+         $("#post").click(function(){
+                                    $.post("post_test",
+                                    {
+                                      code: "good"
+                                    },
+                                    function(data,status){
+                                        alert(jQuery.parseJSON(data).code);
+                                    });
+                                });
+
+
+});
+</script>
+</head>
+<body>
+
+
+<textarea id="editor" rows="20" cols="100" ></textarea>
+<br/>
+<button id="file">load</button>
+<button id="save">save</button>
+<button id="v8">v8</button>
+<button id="run">run</button>
+<button id="ui">ui</button>
+<button id="log">log</button>
+<button id="dir">dir</button>
+<button id="post">post</button>
+</body>
+</html>

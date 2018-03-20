@@ -1,0 +1,2 @@
+init();
+print("hello world");

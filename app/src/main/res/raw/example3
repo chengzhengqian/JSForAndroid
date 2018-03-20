@@ -1,0 +1,21 @@
+init()
+ll=new LinearLayout("v");
+root.add(ll)
+
+btn1=new Button("show")
+btn2=new Button("show")
+onclick=function(x){x.setText(x.getText()+' me!');}
+btn1.onClick(onclick)
+btn2.onClick(onclick)
+ll.add(btn1)
+ll.add(btn2)
+ll=new LinearLayout("h");
+root.add(ll)
+
+btn1=new Button("show")
+btn2=new Button("show")
+onclick=function(x){x.setText(x.getText()+' me!');}
+btn1.onClick(onclick)
+btn2.onClick(onclick)
+ll.add(btn1)
+ll.add(btn2)

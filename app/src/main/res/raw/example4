@@ -1,0 +1,27 @@
+init()
+
+function createLL(o,llp){
+ var ll=new LinearLayout("h");
+ ll.setLinearLayoutPara(llp);
+ return ll
+}
+
+llp=new LinearLayoutPara("m",0,1);
+ll1=createLL("h",llp)
+ll2=createLL("h",llp)
+root.add(ll1)
+root.add(ll2)
+
+llp1=new LinearLayoutPara(0,"w",1)
+onclick=function(x){x.setText(x.getText()+' me!');}
+function createBtn(text,llp){
+  var btn=new Button(text);
+  btn.onClick(onclick);
+  btn.setLinearLayoutPara(llp);
+  return btn;
+}
+
+ll1.add(createBtn("1",llp1))
+ll1.add(createBtn("2",llp1))
+ll2.add(createBtn("3",llp1))
+ll2.add(createBtn("5",llp1))

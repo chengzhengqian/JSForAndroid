@@ -1,0 +1,7 @@
+load("android.widget.Button","Btn");
+proxy("android.view.View$OnClickListener","Clk");
+root.removeAllViews();
+b=new Btn(app);
+b.setText("button");
+b.setOnClickListener(new Clk({onClick:"(v)=>{v.setText('clicked');}"}));
+root.addView(b);

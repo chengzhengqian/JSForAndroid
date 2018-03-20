@@ -1,0 +1,4 @@
+init()
+btn=new Button("show")
+root.add(btn)
+btn.onClick(function(x){x.setText(x.getText()+' me!');})
