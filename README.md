@@ -52,11 +52,11 @@ root.removeAllViews();
 lp=new LLP(0,-2,1.0);
 l=new LL(app)
 for(i=0;i<5;i++){
-    b=new Btn(app);
+	b=new Btn(app);
         b.setText("btn");
-	    b.setLayoutParams(lp)
-	        b.setOnClickListener(new Clk({onClick:"(v)=>{v.setText('clicked');}"}));
-		    l.addView(b);
+	b.setLayoutParams(lp)
+	b.setOnClickListener(new Clk({onClick:"(v)=>{v.setText('clicked');}"}));
+	l.addView(b);
 		    
 }
 root.addView(l)
