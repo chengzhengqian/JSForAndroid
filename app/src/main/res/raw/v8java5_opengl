@@ -1,0 +1,51 @@
+load("android.opengl.GLSurfaceView","GLV")
+loadClass("android.opengl.GLSurfaceView","GLV_")
+proxy("android.opengl.GLSurfaceView$Renderer","GLR")
+loadClass("android.opengl.GLES20","GL")
+load("android.widget.Button","Btn");
+proxy("android.view.View$OnClickListener","Clk");
+load("android.widget.LinearLayout$LayoutParams","LLP");
+load("android.widget.LinearLayout","LL");
+
+root.removeAllViews();
+lp=new LLP(-1,-2,0.0);
+b=new Btn(app);
+b.setOnClickListener(new Clk({onClick:"(v)=>{gl.requestRender()}"}));
+b.setText("chang color");
+b.setLayoutParams(lp)
+
+root.addView(b)
+
+lp=new LLP(-1,0,8.0);
+
+//gl.setEGLContextClientVersion(2)
+
+gl=new GLV(app)
+
+gl.setRenderer(new GLR({
+onSurfaceCreated:`
+    @@newgl@@
+    (x,config)=>{
+
+    a=0.2;}
+`,
+
+onDrawFrame:`
+    @@gl@@
+    (x)=>{
+    GL.glClearColor(1.0, a, 1-a, 1.0);
+    c=GL.GL_COLOR_BUFFER_BIT();
+    GL.glClear(c);
+    a=a+0.11;}
+`,
+
+onSurfaceChanged:`
+    @@gl@@
+    (x,w,h)=>{};
+`
+
+}));
+mode=GLV_.RENDERMODE_WHEN_DIRTY()
+gl.setRenderMode(mode)
+gl.setLayoutParams(lp);
+root.addView(gl)

@@ -1,0 +1,18 @@
+proxy("com.serendipity.chengzhengqian.scriptor.V8WrapInterface","V8I");
+load("com.serendipity.chengzhengqian.scriptor.V8WrapClass","V8C");
+loadClass("com.serendipity.chengzhengqian.scriptor.V8WrapClass","V8C_");
+loadClass("java.lang.reflect.Array","JA_");
+i=new V8I({Run:"(v)=>{print(v.get())};"});
+w=new V8C(1232);
+w.run(i);
+V8C_.staticTest(1)
+print(V8C_.a())
+print(w.i())
+d=(w.copyNew(1))
+print(d.i())
+c=jArray("int",2)
+print(JA_.set(c,0,123123))
+print(JA_.get(c,0))
+d=jArray(V8C_,2)
+print(JA_.set(d,0,w))
+print(JA_.get(d,0).i())

@@ -73,6 +73,14 @@ public class JavaV8Interface  {
             }
         };
     }
+    public static V8 createRuntime(String threadName){
+        V8 v8=createRuntime();
+        if(threadName.equals("gl")){
+            String code=MainActivityState.currentActivity.getRawResource(R.raw.init_gl);
+            v8.executeVoidScript(code);
+        }
+        return v8;
+    }
     public static V8 createRuntime(){
         V8 v8=V8.createV8Runtime();
         v8.registerJavaMethod(print(),"print");
@@ -82,6 +90,8 @@ public class JavaV8Interface  {
         v8.registerJavaMethod(importClassTypeAsObject(v8),"loadClass");
         v8.registerJavaMethod(importClass(v8),"load");
         v8.registerJavaMethod(proxyInterface(v8),"proxy");
+        v8.registerJavaMethod(convertToJavaArray(v8),"jArray");
+        v8.registerJavaMethod(convertToFloat(v8),"float");
         registerJavaObject(v8,MainActivityState.currentActivity,"app",INSTANTIALMETHODS);
         registerJavaObject(v8,MainActivityState.currentActivity.ui_ll,"root",INSTANTIALMETHODS);
 
@@ -121,8 +131,10 @@ public class JavaV8Interface  {
 
     }
     public static void release(Object v){
-        if(v instanceof Releasable)
-            ((Releasable) v).release();
+        if(v!=null) {
+            if (v instanceof Releasable)
+                ((Releasable) v).release();
+        }
     }
     public static int FULL=1;
     public static int SIMPLE=2;
@@ -147,6 +159,13 @@ public class JavaV8Interface  {
                     release(v);
 
                     s.append(c.getName()+":\n"+jv.toString()+"\n");
+                    if(jv.getClass().getName().startsWith("[")){
+                        int size=Array.getLength(jv);
+                        for(int k=0;k<size;k++){
+                            s.append(Array.get(jv,k)+"  ");
+                        }
+
+                    }
                 }
 
                 return s.toString();
@@ -204,6 +223,7 @@ public class JavaV8Interface  {
         }
         return false;
     }
+
     public static  boolean isMatch(Constructor<?> ctr, List<Object> paras){
         Class<?>[] types=ctr.getParameterTypes();
         if(types.length==paras.size()){
@@ -252,7 +272,12 @@ public class JavaV8Interface  {
         return null;
     }
     public static void addLog(Object s){
-        MainActivityState.currentActivity.log.append(s.toString());
+        if(s!=null) {
+            MainActivityState.currentActivity.log.append(s.toString());
+        }
+        else {
+            MainActivityState.currentActivity.log.append("null");
+        }
     }
     public static String getConstrutorsInfo(Constructor<?>[] ctrs){
         StringBuilder s=new StringBuilder();
@@ -373,11 +398,89 @@ public class JavaV8Interface  {
             return false;
         }
     }
-
+    public static JavaCallback generateArrayGetLength(V8 v8, final Object obj){
+        return new JavaCallback() {
+            @Override
+            public Object invoke(V8Object v8Object, V8Array v8Array) {
+                return Array.getLength(obj);
+            }
+        };
+    }
+    public static JavaCallback generateArrayGet(final V8 v8, final Object obj){
+        return new JavaCallback() {
+            @Override
+            public Object invoke(V8Object v8Object, V8Array v8Array) {
+                List<Object> paras=getParamsFromV8Array(v8Array);
+                Object result=null;
+                if(paras.size()>0){
+                    Object index=paras.get(0);
+                    if( index instanceof Integer){
+                        result=Array.get(obj, (Integer) index);
+                    }
+                }
+                else{
+                    addLog("jArray.get(int )");
+                }
+                releaseParams(paras);
+                return convertToJavaScriptObject(result,v8);
+            }
+        };
+    }
+    public static JavaCallback generateArraySet(final V8 v8, final Object obj){
+        return new JavaCallback() {
+            @Override
+            public Object invoke(V8Object v8Object, V8Array v8Array) {
+                List<Object> paras=getParamsFromV8Array(v8Array);
+                List<Object> javaParas=convertToJavaObjects(paras);
+                if(javaParas.size()>1){
+                    Object index=javaParas.get(0);
+                    Object item=javaParas.get(1);
+                    if(index instanceof Integer){
+                        Array.set(obj, (Integer) index,item);
+                    }
+                }
+                releaseParams(paras);
+                return null;
+            }
+        };
+    }
+    public static JavaCallback convertToFloat(final V8 v8){
+        return new JavaCallback() {
+            @Override
+            public Object invoke(V8Object v8Object, V8Array v8Array) {
+                List<Object> paras=getParamsFromV8Array(v8Array);
+                Float result=0.0f;
+                if(paras.size()>0){
+                    Object data=paras.get(0);
+                    if(data instanceof Double){
+                        result=((Double)data).floatValue();
+                    }
+                    else if(data instanceof Integer){
+                        result=Float.valueOf((Integer)data);
+                    }
+                    else if(data instanceof String){
+                        result =Float.valueOf((String)data);
+                    }
+                    else {
+                        addLog("float() only takes int double string types");
+                    }
+                }
+                releaseParams(paras);
+                return wrapToJavaScript(result,v8,INSTANTIALMETHODS);
+            }
+        };
+    }
     public static void registerMethods(V8 v8, Object obj,V8Object v8obj, Class<?> c,int type){
         Map<String,List<Method>> gms=groupOverloaded(c.getMethods(),type);
         for(String s:gms.keySet()){
             v8obj.registerJavaMethod(generateFromGroupMethods(v8,obj,gms.get(s)),s);
+        }
+        /* special care for array
+         * */
+        if(obj!=null && obj.getClass().getName().startsWith("[")){
+            v8obj.registerJavaMethod(generateArrayGetLength(v8,obj),"length");
+            v8obj.registerJavaMethod(generateArrayGet(v8,obj),"get");
+            v8obj.registerJavaMethod(generateArraySet(v8,obj),"set");
         }
     }
     public static void registerField(V8 v8, Object obj, V8Object v8obj, Class<?> c, int type){
@@ -391,6 +494,8 @@ public class JavaV8Interface  {
                     v8obj.registerJavaMethod(generateFromField(v8,f,obj),f.getName());
             }
         }
+
+
     }
     public static void registerGetId(Object obj,V8Object v8obj){
         v8obj.registerJavaMethod(generateGetId(obj),GETIDJAVASCRIPTFUNCNAME);
@@ -399,7 +504,7 @@ public class JavaV8Interface  {
     wrap a java object to a V8Obj
     * */
 
-    public static Object wrapToJavaScript(Object obj,V8 v8,int type){
+    private static Object wrapToJavaScript(Object obj,V8 v8,int type){
         V8Object v8obj=new V8Object(v8);
         //Method[] ms=obj.getClass().getDeclaredMethods();
 
@@ -425,7 +530,7 @@ public class JavaV8Interface  {
         }
         else {
             // just instantiated method
-            return wrapToJavaScript(b,v8,1);
+            return wrapToJavaScript(b,v8,INSTANTIALMETHODS);
         }
     }
 
@@ -517,8 +622,8 @@ public class JavaV8Interface  {
                     }
                 }
                 else{
-                    addLog(ms.get(0).getName()+" does not an overloaed with signature\n"+ getParasInfo(java_paras)
-                            +"\nFollowing are candidates:\n"+getMethodsInfo(ms));
+                    addLog(ms.get(0).getName()+" does not an overloaded function with signature\n"+ getParasInfo(java_paras)
+                            +"\nFollowing are possible candidates:\n"+getMethodsInfo(ms));
 
                 }
                 releaseParams(paras);
@@ -655,7 +760,8 @@ public class JavaV8Interface  {
 
                     }
                     else {
-                        addLog(c.getName()+" does not a constructor with signature\n"+ getParasInfo(java_paras)+"\nFollowing are candidates:\n"+getConstrutorsInfo(ctrs));
+                        addLog(c.getName()+" does not have a constructor with signature\n"
+                                + getParasInfo(java_paras)+"\nFollowing are possible candidates:\n"+getConstrutorsInfo(ctrs));
                     }
 
                 } catch (Exception e) {
@@ -792,6 +898,78 @@ public class JavaV8Interface  {
         };
     }
 
+    private static JavaCallback convertToJavaArray(final V8 v8){
+        return new JavaCallback() {
+            @Override
+            public Object invoke(V8Object v8Object, V8Array v8Array) {
+                List<Object> paras=getParamsFromV8Array(v8Array);
 
+                Object obj=null;
+                if(paras.size()>1) {
+                    if (paras.get(1) instanceof Integer) {
+                        //List<Object> javaParas=convertToJavaObjects(paras);
+
+                        if (paras.get(0) instanceof String) {
+                            if (paras.get(0).equals("int")) {
+                                obj = Array.newInstance(int.class, (Integer) paras.get(1));
+
+                            } else if (paras.get(0).equals("double")) {
+                                obj = Array.newInstance(double.class, (Integer) paras.get(1));
+
+                            } else if (paras.get(0).equals("float")) {
+                                obj = Array.newInstance(float.class, (Integer) paras.get(1));
+
+                            } else {
+                                addLog("jArray, the first arguemnt must be 'int','double','float', or class type instance");
+                            }
+                        } else if (paras.get(0) instanceof Class) {
+                            obj = Array.newInstance((Class<?>) paras.get(0), (Integer) paras.get(1));
+                        } else {
+                            addLog("jArray, the first argument must be string or class type instance\n");
+                        }
+                    }
+                }
+                if(paras.get(0) instanceof V8Array) {
+                    List<Object> data=getParamsFromV8Array((V8Array) paras.get(0));
+                    List<Object> jdata=convertToJavaObjects(data);
+                    int length=jdata.size();
+                    if(paras.size()>1){
+                        if(paras.get(1) instanceof String){
+                            if(paras.get(1).equals("float")){
+                                obj=Array.newInstance(float.class,length);
+                                for (int i = 0; i < length; i++) {
+                                    float f;
+                                    if(jdata.get(i) instanceof Integer)
+                                        Array.set(obj, i, Float.valueOf((Integer)jdata.get(i)));
+                                    else if (jdata.get(i) instanceof Double)
+                                        Array.set(obj, i, ((Double) jdata.get(i)).floatValue());
+
+                                }
+                            }
+                        }
+                        else {
+                            addLog("the type should be float,");
+                        }
+
+                    }
+                    else {
+                        obj = Array.newInstance(data.get(0).getClass(), length);
+                        for (int i = 0; i < length; i++) {
+                            Array.set(obj, i, jdata.get(i));
+                        }
+                    }
+                    releaseParams(data);
+
+                }
+
+                else{
+                    addLog("jArray, pass a array in java script of class type, int \n");
+                }
+
+                releaseParams(paras);
+                return wrapToJavaScript(obj,v8,INSTANTIALMETHODS);
+            }
+        };
+    }
 
 }

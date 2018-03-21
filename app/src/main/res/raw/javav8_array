@@ -1,0 +1,6 @@
+triangle_data=jArray([0,1,0,1,0,0,1,1,0],"float");
+print(Object.getOwnPropertyNames(triangle_data))
+print(triangle_data.length())
+print(triangle_data.set(1,float("2132")))
+print(inspectJava(triangle_data))
+print(triangle_data.get(1))

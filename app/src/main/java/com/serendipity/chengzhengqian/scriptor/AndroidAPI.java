@@ -133,7 +133,7 @@ public class AndroidAPI implements Android{
 
     @Override
     public void GLView(String name) {
-        JSGLView gl=new JSGLView(context);
+        JSGLView gl=new JSGLView(context,new JSRender());
         map.put(name, gl);
 
     }

@@ -1,7 +1,7 @@
 proxy("com.serendipity.chengzhengqian.scriptor.V8WrapInterface","V8I");
 load("com.serendipity.chengzhengqian.scriptor.V8WrapClass","V8C");
 loadClass("com.serendipity.chengzhengqian.scriptor.V8WrapClass","V8C_");
-i=new V8I({Run:"(v)=>{print(v.get())};"});
+i=new V8I({Run:"(v)=>{print(v.get())};",RunInt:"(x)=>{print(x)};"});
 w=new V8C(12);
 w.run(i);
 V8C_.staticTest(1)

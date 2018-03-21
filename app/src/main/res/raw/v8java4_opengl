@@ -1,0 +1,18 @@
+load("android.opengl.GLSurfaceView","GLV")
+load("android.widget.Button","Btn");
+proxy("android.view.View$OnClickListener","Clk");
+load("android.widget.LinearLayout$LayoutParams","LLP");
+load("android.widget.LinearLayout","LL");
+
+root.removeAllViews();
+lp=new LLP(0,0,1.0);
+b=new Btn(app);
+b.setText("btn");
+b.setLayoutParams(lp)
+
+root.add(b)
+
+lp=new LLP(0,0,8.0);
+gl=new GLV(app);
+gl.setLayoutParams(lp)
+root.add(gl)

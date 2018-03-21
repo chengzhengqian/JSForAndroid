@@ -380,6 +380,8 @@ public class MainActivity extends Activity {
             //it seems that new function like will generated a lot of handles that J2V8 can not deal properly
 //            AndroidV8.releaseGeneratedObjects();
             v8.release();
+            // there is some problem to releaseRuntum in this way, we add getLocker().release()
+            ProxyListener.releaseOtherRuntimes();
         }
         catch (Exception e){
             addLog(e.toString());
@@ -393,7 +395,7 @@ public class MainActivity extends Activity {
             Object r =  v8.executeScript(s);
 
         } catch (Exception e) {
-            addLog(e.toString());
+            addLog(e.toString()+"\n");
         }
 
 
@@ -433,7 +435,7 @@ public class MainActivity extends Activity {
     }
     private String example_dir="/example";
 
-    private String getRawResource(int id){
+    public String getRawResource(int id){
         InputStream input= getResources().openRawResource(id);
         String content=(readFromInputStream(input));
         return content;
@@ -457,9 +459,11 @@ public class MainActivity extends Activity {
         f.mkdir();
         writeExamples(R.raw.v8java1,"basic.js");
         writeExamples(R.raw.v8java1_,"basic_.js");
+        writeExamples(R.raw.v8java_array,"basic_array.js");
 
         writeExamples(R.raw.v8java2,"button.js");
         writeExamples(R.raw.v8java3,"layout.js");
+        writeExamples(R.raw.v8java5_opengl,"opengl.js");
 //        writeExamples(R.raw.v8example1,"basic.js");
 //        writeExamples(R.raw.v8example2,"layout.js");
 //        writeExamples(R.raw.v8math,"math.js");
@@ -544,6 +548,9 @@ public class MainActivity extends Activity {
             }
             else if(type==3){
                 JavaV8Interface.runJavascript(this.code);
+            }
+            else if(type==4){
+                log.append(this.code);
             }
             else {
                 try {

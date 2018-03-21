@@ -28,6 +28,8 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+    androidTestCompile 'com.linkedin.dexmaker:dexmaker-mockito:2.12.1'
+    compile 'com.linkedin.dexmaker:dexmaker-mockito:2.12.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'org.nanohttpd:nanohttpd:2.2.0'
     compile 'com.squareup.duktape:duktape-android:1.2.0'

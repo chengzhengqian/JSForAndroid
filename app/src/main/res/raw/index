@@ -96,7 +96,7 @@ $(document).ready(function(){
 <body>
 
 
-<textarea id="editor" rows="20" cols="100" ></textarea>
+<textarea id="editor" rows="40" cols="100" ></textarea>
 <br/>
 <button id="file">load</button>
 <button id="save">save</button>

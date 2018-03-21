@@ -39,6 +39,7 @@ public class V8WrapClass {
     public char getChar(){return 'c';}
     public void run(V8WrapInterface t){
         t.Run(this);
+        t.RunInt(this.i);
     }
     public static void staticTest(int a){
         MainActivityState.sendMain(0,String.format("print('staticTest(int:%s)');",String.valueOf(a)));
