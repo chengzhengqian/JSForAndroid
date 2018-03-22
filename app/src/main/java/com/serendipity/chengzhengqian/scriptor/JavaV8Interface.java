@@ -205,6 +205,15 @@ public class JavaV8Interface  {
             }
 
         }
+        else if(c.equals((boolean.class))){
+            if(obj instanceof Boolean){
+                return true;
+            }
+
+            else {
+                return false;
+            }
+        }
         else if(c.equals(float.class)){
             if(obj instanceof Integer){
                 paras.set(k,Float.valueOf((Integer)obj));
@@ -273,10 +282,12 @@ public class JavaV8Interface  {
     }
     public static void addLog(Object s){
         if(s!=null) {
-            MainActivityState.currentActivity.log.append(s.toString());
+           // MainActivityState.currentActivity.log.append(s.toString());
+            MainActivityState.sendMain(4,s.toString());
         }
         else {
-            MainActivityState.currentActivity.log.append("null");
+          //  MainActivityState.currentActivity.log.append("null");
+            MainActivityState.sendMain(4,"");
         }
     }
     public static String getConstrutorsInfo(Constructor<?>[] ctrs){
@@ -384,6 +395,9 @@ public class JavaV8Interface  {
             return true;
         }
         else if(t instanceof String){
+            return true;
+        }
+        else if(t instanceof Boolean){
             return true;
         }
         else {

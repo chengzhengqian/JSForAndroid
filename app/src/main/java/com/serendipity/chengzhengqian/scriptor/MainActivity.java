@@ -460,6 +460,8 @@ public class MainActivity extends Activity {
         writeExamples(R.raw.v8java1,"basic.js");
         writeExamples(R.raw.v8java1_,"basic_.js");
         writeExamples(R.raw.v8java_array,"basic_array.js");
+        writeExamples(R.raw.javav8_opengl6,"opengl_triangle" +
+                ".js");
 
         writeExamples(R.raw.v8java2,"button.js");
         writeExamples(R.raw.v8java3,"layout.js");
