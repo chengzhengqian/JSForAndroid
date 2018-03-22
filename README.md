@@ -171,8 +171,5 @@ gl.setRenderMode(mode)
 gl.setLayoutParams(lp);
 root.addView(gl)
 
-})"}"
-}
-}))
 
 ```
